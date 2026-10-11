@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulk Certificate Generator — Grahith Rao</title>
+  <meta name="description" content="Create polished certificates for your entire batch with asynchronous processing, failure isolation, and real-time progress tracking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Header with subtle pale-blue accent background -->
+  <header class="header-section">
+    <div class="header-container">
+      <div class="header-content">
+        <div class="header-brand">
+          <span class="badge-accent">BATCH GENERATOR</span>
+          <h1 class="header-title">Bulk Certificate Generator</h1>
+          <p class="header-subtitle">Create polished certificates for your entire batch.</p>
+        </div>
+        <div class="header-credit">
+          <span class="credit-label">DEVELOPED BY</span>
+          <span class="credit-author">Project by Grahith Rao</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+    <!-- Two Column Desktop Layout: Configuration (Main) & Preview (Secondary) -->
+    <div class="workspace-grid">
+      <!-- Main Column: Certificate Details & Recipient Entry -->
+      <section class="card config-card" aria-labelledby="batch-config-title">
+        <div class="card-header">
+          <div>
+            <h2 id="batch-config-title" class="card-title">Certificate & Batch Details</h2>
+            <p class="card-description">Configure event metadata and specify recipient participants.</p>
+          </div>
+          <div class="sample-btn-group" role="group" aria-label="Sample Batch Presets">
+            <span class="sample-label">Load sample:</span>
+            <button type="button" class="btn-preset" id="btn-sample-mixed">Mixed Batch</button>
+            <button type="button" class="btn-preset" id="btn-sample-valid">All Valid</button>
+            <button type="button" class="btn-preset" id="btn-sample-unicode">Unicode</button>
+          </div>
+        </div>
+
+        <form id="job-form" novalidate>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="event_name">Event / Program Name <span class="required-indicator" aria-hidden="true">*</span></label>
+              <input type="text" id="event_name" required placeholder="e.g. Python Backend Development Workshop" maxlength="200" autocomplete="off">
+              <span class="field-hint">The title of the workshop, course, or certification program.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="issuer_name">Issuing Organization <span class="required-indicator" aria-hidden="true">*</span></label>
+              <input type="text" id="issuer_name" required placeholder="e.g. Example Learning Academy" maxlength="200" autocomplete="off">
+              <span class="field-hint">Organization conferring the certificate.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="issue_date">Issue Date <span class="required-indicator" aria-hidden="true">*</span></label>
+              <input type="date" id="issue_date" required>
+              <span class="field-hint">Date displayed on the certificate.</span>
+            </div>
+          </div>
+
+          <!-- Recipient Entry Section -->
+          <div class="recipients-container">
+            <div class="recipients-toolbar">
+              <div>
+                <h3 class="section-subtitle">Recipients List (<span id="recipient-count">0</span>)</h3>
+                <p class="section-subtext">Each participant receives a uniquely numbered certificate.</p>
+              </div>
+              <button type="button" class="btn-outline-primary" id="btn-add-recipient">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M8 2a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 8 2Z"/>
+                </svg>
+                Add Recipient
+              </button>
+            </div>
+
+            <div class="table-card">
+              <table class="recipients-input-table" aria-label="Recipients Input Table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Full Name <span class="required-indicator">*</span></th>
+                    <th>Email Address <span class="required-indicator">*</span></th>
+                    <th style="width: 50px;" class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recipients-tbody">
+                  <!-- Dynamic rows generated by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Form Submit Footer -->
+          <div class="form-action-footer">
+            <div id="form-error-banner" class="alert-inline alert-error hidden" role="alert"></div>
+            <button type="submit" class="btn-primary btn-lg" id="btn-submit-job">
+              <span id="btn-submit-text">Generate Certificates</span>
+              <span id="btn-submit-spinner" class="spinner hidden" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Secondary Column: Certificate Preview -->
+      <aside class="card preview-card" aria-labelledby="preview-heading">
+        <div class="card-header">
+          <div>
+            <div class="preview-title-row">
+              <h2 id="preview-heading" class="card-title">Certificate Preview</h2>
+              <span id="preview-mode-badge" class="badge-sample">Sample preview</span>
+            </div>
+            <p class="card-description" id="preview-description">Official print-ready vector PDF template rendered with ReportLab.</p>
+          </div>
+          <a id="btn-preview-new-tab" href="/api/v1/certificates/preview" target="_blank" class="link-external" title="Open full PDF in new tab">
+            Open PDF ↗
+          </a>
+        </div>
+
+        <div class="preview-stage">
+          <div class="preview-aspect-box">
+            <iframe id="cert-preview-frame" src="/api/v1/certificates/preview#toolbar=0&navpanes=0&scrollbar=0" title="Live Certificate PDF Preview" loading="lazy"></iframe>
+          </div>
+          <div class="preview-caption">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" class="icon-info" aria-hidden="true">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14Zm0-1A6 6 0 1 0 8 2a6 6 0 0 0 0 12Zm-.75-7.5a.75.75 0 0 1 1.5 0v4a.75.75 0 0 1-1.5 0v-4Zm.75-2.25a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/>
+            </svg>
+            <span>Exact PDF preview rendered with ReportLab matching downloaded certificates.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Below: Job Progress & Recipient Outcomes Section -->
+    <section class="card monitor-card" aria-labelledby="monitor-title">
+      <div class="card-header">
+        <div>
+          <h2 id="monitor-title" class="card-title">Generation Progress & Outcomes</h2>
+          <p class="card-description">Live background job tracking with individual failure isolation.</p>
+        </div>
+        <div id="job-status-pill" class="pill-badge pill-idle">Idle (No Active Batch)</div>
+      </div>
+
+      <!-- Empty State before any submission -->
+      <div id="monitor-empty-state" class="empty-state-box">
+        <div class="empty-icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h3 class="empty-title">Ready for Batch Generation</h3>
+        <p class="empty-text">Fill in the certificate details above or choose a sample preset, then click <strong>Generate Certificates</strong> to launch background processing.</p>
+      </div>
+
+      <!-- Active Job Progress & Outcomes (shown when active or finished) -->
+      <div id="monitor-active-wrapper" class="hidden">
+        <!-- Job Meta Strip -->
+        <div class="meta-strip">
+          <div class="meta-col">
+            <span class="meta-label">JOB ID</span>
+            <span class="meta-val font-mono" id="disp-job-id">-</span>
+          </div>
+          <div class="meta-col">
+            <span class="meta-label">EVENT / PROGRAM</span>
+            <span class="meta-val" id="disp-event-name">-</span>
+          </div>
+          <div class="meta-col">
+            <span class="meta-label">ISSUER</span>
+            <span class="meta-val" id="disp-issuer-name">-</span>
+          </div>
+        </div>
+
+        <!-- Progress Bar Box -->
+        <div class="progress-container">
+          <div class="progress-info-row">
+            <span class="progress-label">Batch Progress</span>
+            <span id="disp-progress-percent" class="progress-percent-val">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progress-bar-fill" class="progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Metric Counter Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card metric-total">
+            <span class="metric-number" id="cnt-total">0</span>
+            <span class="metric-name">Total Submitted</span>
+          </div>
+          <div class="metric-card metric-completed">
+            <span class="metric-number" id="cnt-completed">0</span>
+            <span class="metric-name">Successfully Generated</span>
+          </div>
+          <div class="metric-card metric-failed">
+            <span class="metric-number" id="cnt-failed">0</span>
+            <span class="metric-name">Failed / Rejected</span>
+          </div>
+          <div class="metric-card metric-remaining">
+            <span class="metric-number" id="cnt-remaining">0</span>
+            <span class="metric-name">Remaining in Queue</span>
+          </div>
+        </div>
+
+        <!-- Recipient Outcomes Table -->
+        <div class="outcomes-wrapper">
+          <div class="outcomes-toolbar">
+            <h3 class="section-subtitle">Recipient Generation Results</h3>
+            <div class="filter-group">
+              <label for="outcome-filter" class="filter-label">Filter:</label>
+              <select id="outcome-filter" class="select-light">
+                <option value="">All Outcomes</option>
+                <option value="completed">Completed Only</option>
+                <option value="failed">Failed Only</option>
+                <option value="pending">Pending Only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="outcomes-table" aria-label="Recipient Outcomes Table">
+              <thead>
+                <tr>
+                  <th style="width: 48px;">#</th>
+                  <th>Recipient Name</th>
+                  <th>Email Address</th>
+                  <th style="width: 110px;">Status</th>
+                  <th>Outcome Details</th>
+                  <th style="width: 170px;" class="text-right">Certificate Actions</th>
+                </tr>
+              </thead>
+              <tbody id="outcomes-tbody">
+                <!-- Outcomes generated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Clean Footer -->
+  <footer class="footer-section">
+    <div class="footer-container">
+      <div class="footer-text">
+        <span>Portfolio Project by <strong>Grahith Rao</strong></span>
+        <span class="footer-sep">•</span>
+        <span>Built with FastAPI, SQLite (WAL mode), and ReportLab</span>
+      </div>
+      <div class="footer-links">
+        <a href="/docs" target="_blank" class="footer-anchor">OpenAPI Docs (/docs)</a>
+        <span class="footer-sep">•</span>
+        <a href="/health" target="_blank" class="footer-anchor">Health Check</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

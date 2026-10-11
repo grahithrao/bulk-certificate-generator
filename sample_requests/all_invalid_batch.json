@@ -1,0 +1,16 @@
+{
+  "event_name": "Data Engineering Intensive",
+  "issuer_name": "Apex Data Foundation",
+  "issue_date": "2026-10-20",
+  "recipients": [
+    {
+      "name": "",
+      "email": "user1@example.com"
+    },
+    {
+      "name": "Jane Doe",
+      "email": "invalid-email-address@"
+    },
+    999
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "event_name": "Modern Cloud Architecture Symposium",
+  "issuer_name": "DevOps Institute of Technology",
+  "issue_date": "2026-10-15",
+  "recipients": [
+    {
+      "name": "Aarav Sharma",
+      "email": "aarav@example.com"
+    },
+    {
+      "name": "   ",
+      "email": "blank_name@example.com"
+    },
+    {
+      "name": "Diya Rao",
+      "email": "diya@example.com"
+    },
+    {
+      "name": "Carlos Mendoza",
+      "email": "not-an-email"
+    },
+    {
+      "name": "Diya Rao Duplicate",
+      "email": "diya@example.com"
+    },
+    "malformed_non_object_entry"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "event_name": "Python Backend Development Workshop",
+  "issuer_name": "Example Learning Academy",
+  "issue_date": "2026-10-11",
+  "recipients": [
+    {
+      "name": "Aarav Sharma",
+      "email": "aarav@example.com"
+    },
+    {
+      "name": "Diya Rao",
+      "email": "diya@example.com"
+    },
+    {
+      "name": "Marcus Vance",
+      "email": "marcus@example.com"
+    }
+  ]
+}

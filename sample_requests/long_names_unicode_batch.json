@@ -1,0 +1,23 @@
+{
+  "event_name": "International Advanced Distributed Systems and High Performance Computing Masterclass 2026",
+  "issuer_name": "European Institute of Applied Software Engineering",
+  "issue_date": "2026-10-25",
+  "recipients": [
+    {
+      "name": "Dr. Bartholomew Montgomery-Wellington III",
+      "email": "bartholomew@example.com"
+    },
+    {
+      "name": "José García Núñez",
+      "email": "jose.garcia@example.com"
+    },
+    {
+      "name": "Åsa Lindgren-Müller",
+      "email": "asa.lindgren@example.com"
+    },
+    {
+      "name": "François René de Chateaubriand",
+      "email": "francois@example.com"
+    }
+  ]
+}
